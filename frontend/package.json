@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"nodemon server.cjs\" \"vite\"",
+    "dev": "vite",
     "frontend": "vite",
     "backend": "nodemon server.cjs",
     "build": "vite build",
