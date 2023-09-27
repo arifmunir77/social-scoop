@@ -59,4 +59,83 @@ const authUser = asychHandler(async (req, res) => {
   }
 });
 
-export { userRegister, authUser };
+const getAllUser = asychHandler(async (req, res) => {
+  const getPro = await User.find({});
+
+  if (getPro) {
+    res.json(getPro);
+  } else {
+    res.status(404).json({ message: "Product Not Delete" });
+  }
+});
+
+const deleteUser = asychHandler(async (req, res) => {
+  console.log(req.params.id);
+  const getPro = await User.findByIdAndRemove(req.params.id);
+
+  if (getPro) {
+    res.json({ message: "Product is Deleted  ", getPro });
+  } else {
+    res.status(404).json({ message: "Product Not Delete" });
+  }
+});
+
+const getUserById = asychHandler(async (req, res) => {
+  const getPro = await User.findOne({ userId: req.params.id });
+
+  if (getPro) {
+    res.json(getPro);
+  } else {
+    res.status(404).json({ message: "Product Not Delete" });
+  }
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+
+    // Check if the request includes a new password and old password
+    if (req.body.oldPassword && req.body.newPassword) {
+      const oldPasswordMatch = await bcrypt.compare(
+        req.body.oldPassword,
+        user.password
+      );
+
+      if (oldPasswordMatch) {
+        // If the old password matches, hash and update the new password
+        const saltRounds = 10; // You can adjust this value as needed
+        const hashedNewPassword = await bcrypt.hash(
+          req.body.newPassword,
+          saltRounds
+        );
+        user.password = hashedNewPassword;
+      } else {
+        res.status(400).json({ message: "Old password does not match" });
+        return;
+      }
+    }
+
+    const updatedUser = await user.save();
+    if (updatedUser) {
+      res.json({
+        message: "User Updated Successfully",
+      });
+    } else {
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  } else {
+    res.status(404).json({ message: "User not found" });
+  }
+});
+
+export {
+  userRegister,
+  authUser,
+  getAllUser,
+  getUserById,
+  deleteUser,
+  updateUser,
+};
