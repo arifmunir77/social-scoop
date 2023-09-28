@@ -1,6 +1,7 @@
 import asychHandler from "express-async-handler";
 import User from "../model/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import bcrypt from "bcryptjs";
 
 // ********* User Registration*********** //
 // ********* POST Request*********** //
@@ -9,24 +10,26 @@ import generateToken from "../utils/generateToken.js";
 
 const userRegister = asychHandler(async (req, res) => {
   const { name, email, password } = req.body;
-  // console.log(name, email, password );
+   
 
   const userExist = await User.findOne({ email });
   if (userExist) {
     res.status(400);
     throw new Error("User Already Exist");
   }
+
+  const salt = await bcrypt.genSalt(10);
+  let hashPassword = await bcrypt.hash(password, salt);
   const user = await User.create({
     name,
     email,
-    password,
+    password: hashPassword,
   });
   if (user) {
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-
       token: generateToken(user._id),
     });
   } else {
@@ -43,21 +46,37 @@ const authUser = asychHandler(async (req, res) => {
   console.log(email, password);
 
   const user = await User.findOne({ email });
-  console.log(user);
-  if (user && (await user.matchPassword(password))) {
-    //console.log('authentic user', user)
-    // console.log(generateToken(user._id));
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
-    });
+  
+  if (user) {
+    // User with the provided email exists, now compare passwords
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (isPasswordMatch) {
+      // Passwords match, generate and send a token
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: generateToken(user._id),
+      });
+    } else {
+      // Passwords don't match
+      res.status(401);
+      throw new Error("Invalid email or password");
+    }
   } else {
+    // User with the provided email does not exist
     res.status(401);
-    throw new Error("Invalid email and Password");
+    throw new Error("Invalid email or password");
   }
 });
+
+
+
+
+// ********* Get All User*********** //
+// ********* GET /api/user/all-user*********** //
+// ********* Access Publice*********** //
 
 const getAllUser = asychHandler(async (req, res) => {
   const getPro = await User.find({});
@@ -65,33 +84,49 @@ const getAllUser = asychHandler(async (req, res) => {
   if (getPro) {
     res.json(getPro);
   } else {
-    res.status(404).json({ message: "Product Not Delete" });
+    res.status(404).json({ message: "User Not Delete" });
   }
 });
+
+// ********* Delete user By Id User*********** //
+// ********* DELETE /api/user/:id*********** //
+// ********* Access Publice*********** //
 
 const deleteUser = asychHandler(async (req, res) => {
   console.log(req.params.id);
   const getPro = await User.findByIdAndRemove(req.params.id);
 
   if (getPro) {
-    res.json({ message: "Product is Deleted  ", getPro });
+    res.json({ message: "User is Deleted  ", getPro });
   } else {
-    res.status(404).json({ message: "Product Not Delete" });
+    res.status(404).json({ message: "User Not Delete" });
   }
 });
 
+
+// ********* GET user By Id  *********** //
+// ********* GET /api/user/:id*********** //
+// ********* Access Publice*********** //
 const getUserById = asychHandler(async (req, res) => {
   const getPro = await User.findOne({ userId: req.params.id });
 
   if (getPro) {
     res.json(getPro);
   } else {
-    res.status(404).json({ message: "Product Not Delete" });
+    res.status(404).json({ message: "User Not Delete" });
   }
 });
 
-const updateUser = asyncHandler(async (req, res) => {
+
+
+// *********UPDATE user By Id YOu can update your name ,email and password  *********** //
+// ********* PUT /api/user/:id*********** //
+// ********* Access Publice*********** //
+
+const updateUser = asychHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
+
+  console.log("oldData", user, req.body);
 
   if (user) {
     user.name = req.body.name || user.name;
@@ -106,17 +141,17 @@ const updateUser = asyncHandler(async (req, res) => {
 
       if (oldPasswordMatch) {
         // If the old password matches, hash and update the new password
-        const saltRounds = 10; // You can adjust this value as needed
-        const hashedNewPassword = await bcrypt.hash(
-          req.body.newPassword,
-          saltRounds
-        );
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(req.body.newPassword, salt);
+        console.log("hashedNewPassword", hashedNewPassword);
         user.password = hashedNewPassword;
+        console.log("user", user);
       } else {
         res.status(400).json({ message: "Old password does not match" });
         return;
       }
     }
+    console.log("yser", user);
 
     const updatedUser = await user.save();
     if (updatedUser) {

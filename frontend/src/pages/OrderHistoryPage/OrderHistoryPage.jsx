@@ -1,22 +1,19 @@
-import { checkToken } from '../../utilities/users-service'
-
 function OrderHistoryPage() {
-  
   const handleCheckToken = async () => {
     try {
-      const expDate = await checkToken()
-      alert(expDate.toLocaleString())
+      const expDate = await checkToken();
+      alert(expDate.toLocaleString());
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
-  
+  };
+
   return (
-      <div>
+    <div>
       <h1>OrderHistoryPage</h1>
-      <button onClick={handleCheckToken}>Check Log In Expiration</button>
-      </div>
-    )
-  }
-  
-  export default OrderHistoryPage
+      <button>Check Log In Expiration</button>
+    </div>
+  );
+}
+
+export default OrderHistoryPage;

@@ -1,35 +1,26 @@
-import { useState } from 'react'
-import './App.css'
-import { Routes, Route } from 'react-router-dom'
-import NewOrderPage from "../NewOrderPage/NewOrderPage.jsx"
-import OrderHistoryPage from "../OrderHistoryPage/OrderHistoryPage.jsx"
-import AuthPage from "../AuthPage/AuthPage.jsx"
-import NavBar from '../../components/NavBar/NavBar.jsx'
-import { getUser } from '../../utilities/users-service';
+import { useState } from "react";
+import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import NewOrderPage from "../NewOrderPage/NewOrderPage.jsx";
+import OrderHistoryPage from "../OrderHistoryPage/OrderHistoryPage.jsx";
+import AuthPage from "../AuthPage/AuthPage.jsx";
+import NavBar from "../../components/NavBar/NavBar.jsx";
 
 function App() {
-  const [user, setUser] = useState(getUser())
+  const [user, setUser] = useState();
 
   return (
-   
-      <main className="App">
-        {
-          user ?
-          <>
-          {/* NavBar and Routes are only available when user is logged in */}
-            <NavBar user={user} setUser={setUser} />
-          <Routes>
-            <Route path="/orders/new" element={<NewOrderPage />}/>
-            <Route path="/orders" element={<OrderHistoryPage />}/>
-          </Routes>
-           </>
-          :
-            <AuthPage setUser={setUser} />
-        }
-      </main>
-      
-    
-  )
+    <Router>
+      {/* NavBar and Routes are only available when the user is logged in */}
+      {/* <NavBar user={user} setUser={setUser} /> */}
+      <Routes>
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/orders/new" element={<NewOrderPage />} />
+        <Route path="/orders" element={<OrderHistoryPage />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

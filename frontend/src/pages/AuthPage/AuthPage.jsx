@@ -1,14 +1,16 @@
-import SignUpForm from '../../components/SignUpForm/SignUpForm.jsx'
-import LoginForm from '../../components/LoginForm/LoginForm.jsx'
+import SignUpForm from "../../components/SignUpForm/SignUpForm.jsx";
+import LoginForm from "../../components/LoginForm/LoginForm.jsx";
 
 function AuthPage(props) {
   return (
-    <main>
-      <h1>AuthPage</h1>
-      <SignUpForm setUser={props.setUser} />
-      <LoginForm setUser={props.setUser} />
-    </main>
-  )
+    <div>
+      <div className="row d-flex justify-content-center">
+        <div className="signUpForm">
+          <SignUpForm />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default AuthPage
+export default AuthPage;
