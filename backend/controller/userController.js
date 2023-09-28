@@ -1,4 +1,4 @@
-import asychHandler from "express-async-handler";
+import asynchHandler from "express-async-handler";
 import User from "../model/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 // ********* POST /api/register*********** //
 // ********* Access Public*********** //
 
-const userRegister = asychHandler(async (req, res) => {
+const userRegister = asynchHandler(async (req, res) => {
   const { name, email, password } = req.body;
    
 
@@ -41,7 +41,7 @@ const userRegister = asychHandler(async (req, res) => {
 // ********* POST /api/user*********** //
 // ********* Access Publice*********** //
 
-const authUser = asychHandler(async (req, res) => {
+const authUser = asynchHandler(async (req, res) => {
   const { email, password } = req.body;
   console.log(email, password);
 
@@ -71,14 +71,7 @@ const authUser = asychHandler(async (req, res) => {
   }
 });
 
-
-
-
-// ********* Get All User*********** //
-// ********* GET /api/user/all-user*********** //
-// ********* Access Publice*********** //
-
-const getAllUser = asychHandler(async (req, res) => {
+const getAllUser = asynchHandler(async (req, res) => {
   const getPro = await User.find({});
 
   if (getPro) {
@@ -88,11 +81,7 @@ const getAllUser = asychHandler(async (req, res) => {
   }
 });
 
-// ********* Delete user By Id User*********** //
-// ********* DELETE /api/user/:id*********** //
-// ********* Access Publice*********** //
-
-const deleteUser = asychHandler(async (req, res) => {
+const deleteUser = asynchHandler(async (req, res) => {
   console.log(req.params.id);
   const getPro = await User.findByIdAndRemove(req.params.id);
 
@@ -103,11 +92,7 @@ const deleteUser = asychHandler(async (req, res) => {
   }
 });
 
-
-// ********* GET user By Id  *********** //
-// ********* GET /api/user/:id*********** //
-// ********* Access Publice*********** //
-const getUserById = asychHandler(async (req, res) => {
+const getUserById = asynchHandler(async (req, res) => {
   const getPro = await User.findOne({ userId: req.params.id });
 
   if (getPro) {
