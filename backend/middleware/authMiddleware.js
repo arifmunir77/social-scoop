@@ -1,26 +1,21 @@
 import jwt from "jsonwebtoken";
-import User from "../model/userModel.js";
-import asychHandler from "express-async-handler";
-const protect = asychHandler(async (req, res, next) => {
-  let token;
+import dotenv from "dotenv";
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, "login");
-
-      req.user = await User.findById(decoded.id);
-
-      next();
-    } catch (error) {
-      res.status(401);
-
-      throw new Error("No Authorized No Token");
+dotenv.config();
+const secret = process.env.JWTKEY;
+const authMiddleWare = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    console.log(token)
+    if (token) {
+      const decoded = jwt.verify(token, secret);
+      console.log(decoded)
+      req.body._id = decoded?.id;
     }
+    next();
+  } catch (error) {
+    console.log(error);
   }
-});
+};
 
-export default protect;
+export default authMiddleWare;
