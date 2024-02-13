@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.static("public"));
 app.use("/images", express.static("images"));
 
-dotenv.config();
+dotenv.config(); 
 const PORT = process.env.PORT || 5000;
 
 const CONNECTION =
