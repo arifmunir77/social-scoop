@@ -1,10 +1,17 @@
-name: Node.js CI (Backend)
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - 'backend/**' # Specify the backend directory path here
+      - 'backend/**'
+
+
+
+  
 
 jobs:
   build:
@@ -13,7 +20,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x,18.x]
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -22,6 +30,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Install Dependencies
-      working-directory: backend # Set the working directory to backend
-      run: npm ci
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
