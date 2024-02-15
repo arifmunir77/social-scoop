@@ -11,7 +11,7 @@ import PostRoute from "./routes/PostRoute.js";
 import UploadRoute from "./routes/UploadRoute.js"; 
 
 const app = express();
-
+ 
 // middleware
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
