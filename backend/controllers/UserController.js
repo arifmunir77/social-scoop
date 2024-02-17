@@ -24,7 +24,7 @@ export const UserDummy = async (req, res) => {
   try {
     let user = {
       id: "2",
-      name: "abc def",
+      name: "ci cd nodejs pipeline working",
     };
     res.status(200).json(user);
   } catch (error) {
